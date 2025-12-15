@@ -30,7 +30,6 @@ class Ai1wm_Import_Controller {
 	}
 
 	public static function import( $params = array() ) {
-        file_put_contents( __DIR__ . '/../../wp-content/uploads/ai1wm_debug_v2.txt', "Import Controller Entry. Input Params: " . print_r( $params, true ) . "\n", FILE_APPEND );
 		global $wp_filter;
 
 		ai1wm_setup_environment();
@@ -82,12 +81,10 @@ class Ai1wm_Import_Controller {
 							Ai1wm_Log::import( $params );
 
 						} catch ( Ai1wm_Import_Retry_Exception $e ) {
-                            file_put_contents($log_file, "Retry Exception: " . $e->getMessage() . "\n", FILE_APPEND);
 							status_header( $e->getCode() );
 							echo json_encode( array( 'errors' => array( array( 'code' => $e->getCode(), 'message' => $e->getMessage() ) ) ) );
 							exit;
 						} catch ( Exception $e ) {
-                            file_put_contents($log_file, "Exception: " . $e->getMessage() . "\n", FILE_APPEND);
 							Ai1wm_Status::error( __( 'Unable to import', AI1WM_PLUGIN_NAME ), $e->getMessage() );
 							Ai1wm_Notification::error( __( 'Unable to import', AI1WM_PLUGIN_NAME ), $e->getMessage() );
 							Ai1wm_Directory::delete( ai1wm_storage_path( $params ) );
@@ -243,8 +240,6 @@ class Ai1wm_Import_Controller {
         // Sanitize archive name to ensure it's just a filename (prevents double path concatenation)
         $params['archive'] = basename( $params['archive'] );
 
-        // Log resolved paths
-        file_put_contents(__DIR__ . '/../../debug_log.txt', "Resolved Params - Storage: " . $params['storage'] . " Archive: " . $params['archive'] . "\n", FILE_APPEND);
 
 
 		// Set storage path
