@@ -30,6 +30,7 @@ class Ai1wm_Import_Controller {
 	}
 
 	public static function import( $params = array() ) {
+        file_put_contents( __DIR__ . '/../../wp-content/uploads/ai1wm_debug_v2.txt', "Import Controller Entry. Input Params: " . print_r( $params, true ) . "\n", FILE_APPEND );
 		global $wp_filter;
 
 		ai1wm_setup_environment();
@@ -81,10 +82,12 @@ class Ai1wm_Import_Controller {
 							Ai1wm_Log::import( $params );
 
 						} catch ( Ai1wm_Import_Retry_Exception $e ) {
+                            file_put_contents($log_file, "Retry Exception: " . $e->getMessage() . "\n", FILE_APPEND);
 							status_header( $e->getCode() );
 							echo json_encode( array( 'errors' => array( array( 'code' => $e->getCode(), 'message' => $e->getMessage() ) ) ) );
 							exit;
 						} catch ( Exception $e ) {
+                            file_put_contents($log_file, "Exception: " . $e->getMessage() . "\n", FILE_APPEND);
 							Ai1wm_Status::error( __( 'Unable to import', AI1WM_PLUGIN_NAME ), $e->getMessage() );
 							Ai1wm_Notification::error( __( 'Unable to import', AI1WM_PLUGIN_NAME ), $e->getMessage() );
 							Ai1wm_Directory::delete( ai1wm_storage_path( $params ) );
@@ -104,6 +107,9 @@ class Ai1wm_Import_Controller {
 							echo json_encode( $params );
 							exit;
 						}
+
+                        // Ensure the next request targets the generic import handler
+                        $params['action'] = 'ai1wm_import';
 
 						wp_remote_post( apply_filters( 'ai1wm_http_import_url', admin_url( 'admin-ajax.php?action=ai1wm_import' ) ), array(
 							'timeout'   => apply_filters( 'ai1wm_http_import_timeout', 5 ),
@@ -201,14 +207,15 @@ class Ai1wm_Import_Controller {
 		self::import( $params );
 	}
 
+
 	public static function gdrive_v2_import() {
 		ai1wm_setup_environment();
 
 		// Set params
 		$params = stripslashes_deep( array_merge( $_GET, $_POST ) );
 
-		// Set priority to start after upload step
-		$params['priority'] = 10;
+		// Set priority to start at GDrive V2 step
+		$params['priority'] = 4;
 
 		// Set secret key
 		$secret_key = null;
@@ -223,10 +230,22 @@ class Ai1wm_Import_Controller {
 			exit;
 		}
 
-		// Set Google Drive V2 URL from POST data
-		if ( isset( $params['gdrive_v2_url'] ) ) {
-			$params['gdrive_v2_url'] = trim( stripslashes( $params['gdrive_v2_url'] ) );
+		// Set storage param if missing
+		if ( empty( $params['storage'] ) ) {
+			$params['storage'] = ai1wm_storage_folder();
 		}
+
+		// Set archive param if missing
+		if ( empty( $params['archive'] ) ) {
+			$params['archive'] = ai1wm_archive_file();
+		}
+
+        // Sanitize archive name to ensure it's just a filename (prevents double path concatenation)
+        $params['archive'] = basename( $params['archive'] );
+
+        // Log resolved paths
+        file_put_contents(__DIR__ . '/../../debug_log.txt', "Resolved Params - Storage: " . $params['storage'] . " Archive: " . $params['archive'] . "\n", FILE_APPEND);
+
 
 		// Set storage path
 		$storage = ai1wm_storage_path( $params );
@@ -235,10 +254,9 @@ class Ai1wm_Import_Controller {
 		$archive = ai1wm_archive_path( $params );
 
 		// Set params for import
-		$params['storage'] = $storage;
-		$params['archive'] = $archive;
+		$params['storage'] = basename( $storage );
+		$params['archive'] = basename( $archive );
 
-		// Call the standard import method to continue the pipeline
 		self::import( $params );
 	}
 }

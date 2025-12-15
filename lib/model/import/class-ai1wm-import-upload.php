@@ -49,6 +49,14 @@ class Ai1wm_Import_Upload {
 	}
 
 	public static function execute( $params ) {
+        file_put_contents(__DIR__ . '/../../../../debug_log.txt', "Upload Execute Start. Archive: " . ai1wm_archive_path( $params ) . "\n", FILE_APPEND);
+		// Check if file already exists (e.g. from GDrive V2 import)
+		$archive = ai1wm_archive_path( $params );
+		if ( file_exists( $archive ) && filesize( $archive ) > 0 ) {
+            file_put_contents(__DIR__ . '/../../../../debug_log.txt', "Upload Skipped - File Exists\n", FILE_APPEND);
+			return $params;
+		}
+
 		self::validate();
 
 		$error   = $_FILES['upload-file']['error'];

@@ -666,9 +666,10 @@ class Ai1wm_Main_Controller {
 		);
 
 		wp_enqueue_script(
-			'ai1wm_gdrive_v2',
-			Ai1wm_Template::asset_link( 'javascript/gdrive-v2.min.js' ),
-			array( 'jquery', 'ai1wm_import' )
+			'ai1wm-gdrive-v2',
+			Ai1wm_Template::asset_link( 'javascript/gdrive-v2.js' ),
+			array( 'jquery', 'ai1wm_import' ),
+            time() + 150 // Force cache bust again
 		);
 
 		wp_localize_script( 'ai1wm_import', 'ai1wm_feedback', array(
