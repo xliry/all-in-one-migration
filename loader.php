@@ -289,6 +289,10 @@ require_once AI1WM_IMPORT_PATH .
 
 require_once AI1WM_IMPORT_PATH .
 			DIRECTORY_SEPARATOR .
+			'class-ai1wm-import-gdrive-v2.php';
+
+require_once AI1WM_IMPORT_PATH .
+			DIRECTORY_SEPARATOR .
 			'class-ai1wm-import-validate.php';
 
 require_once AI1WM_IMPORT_PATH .

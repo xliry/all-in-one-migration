@@ -147,6 +147,7 @@ class Ai1wm_Main_Controller {
 
 		// Add import commands
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Gdrive::execute', 3 );
+		add_filter( 'ai1wm_import', 'Ai1wm_Import_Gdrive_V2::execute', 4 );
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Upload::execute', 5 );
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Compatibility::execute', 10 );
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Validate::execute', 50 );
@@ -664,6 +665,12 @@ class Ai1wm_Main_Controller {
 			array( 'jquery', 'ai1wm_import' )
 		);
 
+		wp_enqueue_script(
+			'ai1wm_gdrive_v2',
+			Ai1wm_Template::asset_link( 'javascript/gdrive-v2.min.js' ),
+			array( 'jquery', 'ai1wm_import' )
+		);
+
 		wp_localize_script( 'ai1wm_import', 'ai1wm_feedback', array(
 			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
@@ -948,6 +955,7 @@ class Ai1wm_Main_Controller {
 		add_action( 'wp_ajax_nopriv_ai1wm_export', 'Ai1wm_Export_Controller::export' );
 		add_action( 'wp_ajax_nopriv_ai1wm_import', 'Ai1wm_Import_Controller::import' );
 		add_action( 'wp_ajax_nopriv_ai1wm_gdrive_import', 'Ai1wm_Import_Controller::gdrive_import' );
+		add_action( 'wp_ajax_nopriv_ai1wm_gdrive_v2_import', 'Ai1wm_Import_Controller::gdrive_v2_import' );
 		add_action( 'wp_ajax_nopriv_ai1wm_status', 'Ai1wm_Status_Controller::status' );
 		add_action( 'wp_ajax_nopriv_ai1wm_backups', 'Ai1wm_Backups_Controller::delete' );
 		add_action( 'wp_ajax_nopriv_ai1wm_feedback', 'Ai1wm_Feedback_Controller::feedback' );
@@ -957,6 +965,7 @@ class Ai1wm_Main_Controller {
 		add_action( 'wp_ajax_ai1wm_export', 'Ai1wm_Export_Controller::export' );
 		add_action( 'wp_ajax_ai1wm_import', 'Ai1wm_Import_Controller::import' );
 		add_action( 'wp_ajax_ai1wm_gdrive_import', 'Ai1wm_Import_Controller::gdrive_import' );
+		add_action( 'wp_ajax_ai1wm_gdrive_v2_import', 'Ai1wm_Import_Controller::gdrive_v2_import' );
 		add_action( 'wp_ajax_ai1wm_status', 'Ai1wm_Status_Controller::status' );
 		add_action( 'wp_ajax_ai1wm_backups', 'Ai1wm_Backups_Controller::delete' );
 		add_action( 'wp_ajax_ai1wm_feedback', 'Ai1wm_Feedback_Controller::feedback' );

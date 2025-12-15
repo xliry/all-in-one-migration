@@ -24,50 +24,55 @@
  */
 ?>
 
-<div class="ai1wm-container">
-	<div class="ai1wm-row">
-		<div class="ai1wm-left">
-			<div class="ai1wm-holder">
-				<h1>
-					<i class="ai1wm-icon-publish"></i>
-					<?php _e( 'Import Site', AI1WM_PLUGIN_NAME ); ?>
-				</h1>
+<div class="ai1wm-gdrive-v2-import-dialog" style="display: none;">
+	<div class="ai1wm-overlay"></div>
+	<div class="ai1wm-modal-container">
+		<div class="ai1wm-modal-content">
+			<h2>
+				<i class="ai1wm-icon-google-drive"></i>
+				<?php _e( 'Import from Google Drive V2 (No API Key)', AI1WM_PLUGIN_NAME ); ?>
+			</h2>
 
-				<?php include AI1WM_TEMPLATES_PATH . '/common/report-problem.php'; ?>
-
-				<form action="" method="post" id="ai1wm-import-form" class="ai1wm-clear" enctype="multipart/form-data">
-
-					<p>
-						<?php _e( 'Use the box below to upload a wpress file.', AI1WM_PLUGIN_NAME ); ?><br />
-					</p>
-
-					<?php do_action( 'ai1wm_import_left_options' ); ?>
-
-					<?php include AI1WM_TEMPLATES_PATH . '/import/import-buttons.php'; ?>
-
-					<input type="hidden" name="ai1wm_manual_import" value="1" />
-
-				</form>
-
-				<?php do_action( 'ai1wm_import_left_end' ); ?>
-
+			<div class="ai1wm-field">
+				<label for="ai1wm-gdrive-v2-url">
+					<?php _e( 'Google Drive File URL', AI1WM_PLUGIN_NAME ); ?>
+				</label>
+				<input
+					type="text"
+					id="ai1wm-gdrive-v2-url"
+					class="ai1wm-gdrive-v2-url"
+					placeholder="<?php _e( 'Paste Google Drive shareable link here...', AI1WM_PLUGIN_NAME ); ?>"
+				/>
+				<small class="ai1wm-field-help">
+					<?php _e( 'Example: https://drive.google.com/file/d/FILE_ID/view', AI1WM_PLUGIN_NAME ); ?>
+				</small>
 			</div>
-		</div>
-		<div class="ai1wm-right">
-			<div class="ai1wm-sidebar">
-				<div class="ai1wm-segment">
-					<?php if ( ! AI1WM_DEBUG ) : ?>
-						<?php include AI1WM_TEMPLATES_PATH . '/common/share-buttons.php'; ?>
-					<?php endif; ?>
 
-					<h2><?php _e( 'Leave Feedback', AI1WM_PLUGIN_NAME ); ?></h2>
+			<div class="ai1wm-field">
+				<div class="ai1wm-message ai1wm-info-message">
+					<p>
+						<strong><?php _e( 'No API Key Required!', AI1WM_PLUGIN_NAME ); ?></strong><br />
+						<?php _e( 'This version downloads directly from Google Drive without needing an API key.', AI1WM_PLUGIN_NAME ); ?><br />
+						<?php _e( 'Make sure your file is shared as "Anyone with the link" with at least "Viewer" permission.', AI1WM_PLUGIN_NAME ); ?>
+					</p>
+				</div>
+			</div>
 
-					<?php include AI1WM_TEMPLATES_PATH . '/common/leave-feedback.php'; ?>
+			<div class="ai1wm-field" id="ai1wm-gdrive-v2-messages" style="display: none;"></div>
+
+			<div class="ai1wm-field">
+				<div class="ai1wm-buttons">
+					<a href="#" id="ai1wm-gdrive-v2-cancel" class="ai1wm-gdrive-v2-cancel">
+						<?php _e( 'Cancel', AI1WM_PLUGIN_NAME ); ?>
+					</a>
+					<button type="submit" id="ai1wm-gdrive-v2-submit" class="ai1wm-button-green">
+						<i class="ai1wm-icon-publish"></i>
+						<?php _e( 'Import from Google Drive', AI1WM_PLUGIN_NAME ); ?>
+					</button>
+					<span class="spinner"></span>
+					<div class="ai1wm-clear"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
-<?php include AI1WM_TEMPLATES_PATH . '/import/gdrive-modal.php'; ?>
-<?php include AI1WM_TEMPLATES_PATH . '/import/gdrive-v2-modal.php'; ?>
