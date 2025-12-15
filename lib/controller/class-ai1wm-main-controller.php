@@ -108,6 +108,9 @@ class Ai1wm_Main_Controller {
 
 		// Enqueue updater scripts and styles
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_updater_scripts_and_styles' ), 5 );
+
+		// Enqueue settings scripts and styles
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_settings_scripts_and_styles' ), 5 );
 	}
 
 	/**
@@ -143,6 +146,7 @@ class Ai1wm_Main_Controller {
 		add_filter( 'ai1wm_export', 'Ai1wm_Export_Clean::execute', 300 );
 
 		// Add import commands
+		add_filter( 'ai1wm_import', 'Ai1wm_Import_Gdrive::execute', 3 );
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Upload::execute', 5 );
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Compatibility::execute', 10 );
 		add_filter( 'ai1wm_import', 'Ai1wm_Import_Validate::execute', 50 );
@@ -494,6 +498,16 @@ class Ai1wm_Main_Controller {
 			'ai1wm_backups',
 			'Ai1wm_Backups_Controller::index'
 		);
+
+		// Sub-level Settings menu
+		add_submenu_page(
+			'ai1wm_export',
+			__( 'Settings', AI1WM_PLUGIN_NAME ),
+			__( 'Settings', AI1WM_PLUGIN_NAME ),
+			'manage_options',
+			'ai1wm_settings',
+			'Ai1wm_Settings_Controller::index'
+		);
 	}
 
 	/**
@@ -644,6 +658,12 @@ class Ai1wm_Main_Controller {
 			array( 'ai1wm_util' )
 		);
 
+		wp_enqueue_script(
+			'ai1wm_gdrive',
+			Ai1wm_Template::asset_link( 'javascript/gdrive.min.js' ),
+			array( 'jquery', 'ai1wm_import' )
+		);
+
 		wp_localize_script( 'ai1wm_import', 'ai1wm_feedback', array(
 			'ajax'       => array(
 				'url' => wp_make_link_relative( admin_url( 'admin-ajax.php?action=ai1wm_feedback' ) ),
@@ -680,6 +700,10 @@ class Ai1wm_Main_Controller {
 				'url' => wp_make_link_relative( add_query_arg( array( 'secret_key' => get_option( AI1WM_SECRET_KEY ) ), admin_url( 'admin-ajax.php?action=ai1wm_status' ) ) ),
 			),
 			'secret_key' => get_option( AI1WM_SECRET_KEY ),
+		) );
+
+		wp_localize_script( 'ai1wm_gdrive', 'ai1wm_locale', array(
+			'settings_url' => admin_url( 'admin.php?page=ai1wm_settings' ),
 		) );
 
 		wp_localize_script( 'ai1wm_import', 'ai1wm_locale', array(
@@ -849,6 +873,24 @@ class Ai1wm_Main_Controller {
 	}
 
 	/**
+	 * Enqueue scripts and styles for Settings Controller
+	 *
+	 * @param  string $hook Hook suffix
+	 * @return void
+	 */
+	public function enqueue_settings_scripts_and_styles( $hook ) {
+		if ( stripos( 'all-in-one-wp-migration_page_ai1wm_settings', $hook ) === false ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'ai1wm_settings',
+			Ai1wm_Template::asset_link( 'javascript/settings.min.js' ),
+			array( 'jquery' )
+		);
+	}
+
+	/**
 	 * Outputs menu icon between head tags
 	 *
 	 * @return void
@@ -901,6 +943,7 @@ class Ai1wm_Main_Controller {
 		// Public actions
 		add_action( 'wp_ajax_nopriv_ai1wm_export', 'Ai1wm_Export_Controller::export' );
 		add_action( 'wp_ajax_nopriv_ai1wm_import', 'Ai1wm_Import_Controller::import' );
+		add_action( 'wp_ajax_nopriv_ai1wm_gdrive_import', 'Ai1wm_Import_Controller::gdrive_import' );
 		add_action( 'wp_ajax_nopriv_ai1wm_status', 'Ai1wm_Status_Controller::status' );
 		add_action( 'wp_ajax_nopriv_ai1wm_backups', 'Ai1wm_Backups_Controller::delete' );
 		add_action( 'wp_ajax_nopriv_ai1wm_feedback', 'Ai1wm_Feedback_Controller::feedback' );
@@ -909,10 +952,14 @@ class Ai1wm_Main_Controller {
 		// Private actions
 		add_action( 'wp_ajax_ai1wm_export', 'Ai1wm_Export_Controller::export' );
 		add_action( 'wp_ajax_ai1wm_import', 'Ai1wm_Import_Controller::import' );
+		add_action( 'wp_ajax_ai1wm_gdrive_import', 'Ai1wm_Import_Controller::gdrive_import' );
 		add_action( 'wp_ajax_ai1wm_status', 'Ai1wm_Status_Controller::status' );
 		add_action( 'wp_ajax_ai1wm_backups', 'Ai1wm_Backups_Controller::delete' );
 		add_action( 'wp_ajax_ai1wm_feedback', 'Ai1wm_Feedback_Controller::feedback' );
 		add_action( 'wp_ajax_ai1wm_report', 'Ai1wm_Report_Controller::report' );
+		add_action( 'wp_ajax_ai1wm_save_gdrive_key', 'Ai1wm_Settings_Controller::save_api_key' );
+		add_action( 'wp_ajax_ai1wm_validate_gdrive_key', 'Ai1wm_Settings_Controller::validate_api_key' );
+		add_action( 'wp_ajax_ai1wm_check_gdrive_key', 'Ai1wm_Settings_Controller::check_api_key' );
 
 		// Update actions
 		if ( current_user_can( 'update_plugins' ) ) {

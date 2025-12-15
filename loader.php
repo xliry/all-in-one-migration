@@ -227,6 +227,10 @@ require_once AI1WM_CONTROLLER_PATH .
 			DIRECTORY_SEPARATOR .
 			'class-ai1wm-report-controller.php';
 
+require_once AI1WM_CONTROLLER_PATH .
+			DIRECTORY_SEPARATOR .
+			'class-ai1wm-settings-controller.php';
+
 require_once AI1WM_EXPORT_PATH .
 			DIRECTORY_SEPARATOR .
 			'class-ai1wm-export-init.php';
@@ -278,6 +282,10 @@ require_once AI1WM_IMPORT_PATH .
 require_once AI1WM_IMPORT_PATH .
 			DIRECTORY_SEPARATOR .
 			'class-ai1wm-import-upload.php';
+
+require_once AI1WM_IMPORT_PATH .
+			DIRECTORY_SEPARATOR .
+			'class-ai1wm-import-gdrive.php';
 
 require_once AI1WM_IMPORT_PATH .
 			DIRECTORY_SEPARATOR .

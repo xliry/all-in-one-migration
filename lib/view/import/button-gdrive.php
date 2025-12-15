@@ -24,4 +24,6 @@
  */
 ?>
 
-<a href="https://servmask.com/products/google-drive-extension" target="_blank">Google Drive</a>
+<a href="#" id="ai1wm-import-gdrive" class="ai1wm-import-gdrive">
+	<?php _e( 'Google Drive', AI1WM_PLUGIN_NAME ); ?>
+</a>

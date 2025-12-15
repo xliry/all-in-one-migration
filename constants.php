@@ -213,6 +213,16 @@ define( 'AI1WM_AUTH_USER', 'ai1wm_auth_user' );
 // =================
 define( 'AI1WM_AUTH_PASSWORD', 'ai1wm_auth_password' );
 
+// ========================
+// = Google Drive API Key =
+// ========================
+define( 'AI1WM_GDRIVE_API_KEY', 'ai1wm_gdrive_api_key' );
+
+// =======================
+// = Google Drive API URL =
+// =======================
+define( 'AI1WM_GDRIVE_API_URL', 'https://www.googleapis.com/drive/v3' );
+
 // ============
 // = Site URL =
 // ============

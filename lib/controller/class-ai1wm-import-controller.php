@@ -158,4 +158,45 @@ class Ai1wm_Import_Controller {
 			ai1wm_parse_size( AI1WM_MAX_CHUNK_SIZE )
 		);
 	}
+
+	public static function gdrive_import() {
+		ai1wm_setup_environment();
+
+		// Set params
+		$params = stripslashes_deep( array_merge( $_GET, $_POST ) );
+
+		// Set priority to start after upload step
+		$params['priority'] = 10;
+
+		// Set secret key
+		$secret_key = null;
+		if ( isset( $params['secret_key'] ) ) {
+			$secret_key = trim( $params['secret_key'] );
+		}
+
+		try {
+			// Ensure that unauthorized people cannot access import action
+			ai1wm_verify_secret_key( $secret_key );
+		} catch ( Ai1wm_Not_Valid_Secret_Key_Exception $e ) {
+			exit;
+		}
+
+		// Set Google Drive URL from POST data
+		if ( isset( $params['gdrive_url'] ) ) {
+			$params['gdrive_url'] = trim( stripslashes( $params['gdrive_url'] ) );
+		}
+
+		// Set storage path
+		$storage = ai1wm_storage_path( $params );
+
+		// Set archive path
+		$archive = ai1wm_archive_path( $params );
+
+		// Set params for import
+		$params['storage'] = $storage;
+		$params['archive'] = $archive;
+
+		// Call the standard import method to continue the pipeline
+		self::import( $params );
+	}
 }
