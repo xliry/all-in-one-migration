@@ -888,6 +888,10 @@ class Ai1wm_Main_Controller {
 			Ai1wm_Template::asset_link( 'javascript/settings.min.js' ),
 			array( 'jquery' )
 		);
+
+		wp_localize_script( 'ai1wm_settings', 'ai1wm_settings', array(
+			'nonce' => wp_create_nonce( 'ai1wm_gdrive_settings' ),
+		) );
 	}
 
 	/**
